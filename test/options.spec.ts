@@ -1,14 +1,15 @@
 import { resolve } from 'path';
-import { test } from 'uvu';
-import * as assert from 'uvu/assert';
-import { normalizePath } from 'vite';
 import { resolveOptions } from '../src/options';
+import { normalizePath } from 'vite';
+import test from 'ava';
+//import { test } from 'uvu';
+//import * as assert from 'uvu/assert';
 
-test('resolve', async () => {
+test('resolve', async (t) => {
   const options = await resolveOptions({
     pagesDir: 'test/assets/pages',
   });
-  assert.equal(options, {
+  t.deepEqual(options, {
     exclude: [],
     extensions: ['tsx', 'jsx', 'js', 'ts'],
     extensionsRE: /\.(tsx|jsx|js|ts)$/,
@@ -19,4 +20,4 @@ test('resolve', async () => {
   });
 });
 
-test.run();
+//test.run();

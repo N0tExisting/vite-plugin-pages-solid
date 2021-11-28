@@ -1,6 +1,7 @@
 import { resolve } from 'path';
-import { test } from 'uvu';
-import * as assert from 'uvu/assert';
+import test from 'ava';
+//import { test } from 'uvu';
+//import * as assert from 'uvu/assert';
 import { normalizePath } from 'vite';
 import { haveChildren, traverse } from '../src/crawler/crawler';
 import { FileOutput } from '../src/types/page';
@@ -10,7 +11,7 @@ const testDeepPagesDir = 'test/assets/deep-pages';
 
 const currentPath = normalizePath(resolve());
 
-test('Traverse test page dirs', async () => {
+test('Traverse test page dirs', async (t) => {
   const result = await traverse(testPagesDir, ['jsx', 'tsx', 'ts', 'js'], []);
   const expectedResult = [
     {
@@ -75,14 +76,14 @@ test('Traverse test page dirs', async () => {
   ];
 
   expectedResult.forEach((i) =>
-    assert.equal(
+    t.deepEqual(
       result.find((o) => o.path === i.path),
       i,
     ),
   );
 });
 
-test('Traverse test deep pages dir', async () => {
+test('Traverse test deep pages dir', async (t) => {
   const result = await traverse(testDeepPagesDir, ['jsx', 'tsx', 'ts', 'js'], []);
   const expectedResult = [
     {
@@ -114,30 +115,30 @@ test('Traverse test deep pages dir', async () => {
   ];
 
   expectedResult.forEach((i) =>
-    assert.equal(
+    t.deepEqual(
       result.find((o) => o.path === i.path),
       i,
     ),
   );
 });
 
-test('Have children - Should return true', () => {
+test('Have children - Should return true', (t) => {
   const files: FileOutput = {
     path: '/',
     children: [{ path: '/about' }],
   };
   const result = haveChildren(files);
 
-  assert.equal(result, true);
+  t.true(result);
 });
 
-test('Have children - Should return false', () => {
+test('Have children - Should return false', (t) => {
   const files: FileOutput = {
     path: '/',
   };
   const result = haveChildren(files);
 
-  assert.equal(result, false);
+  t.false(result);
 });
 
-test.run();
+//test.run();

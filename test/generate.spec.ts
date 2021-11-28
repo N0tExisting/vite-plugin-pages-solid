@@ -1,16 +1,17 @@
 import { resolve } from 'path';
-import { test } from 'uvu';
-import * as assert from 'uvu/assert';
+//import { test } from 'uvu';
+//import * as assert from 'uvu/assert';
+import test from 'ava';
 import { normalizePath } from 'vite';
 import { generateRoutes, generateClientCode } from '../src/generate';
 import { resolvePages } from '../src/pages';
 import { resolveOptions } from '../src/options';
-import { pathToName } from '../src/utils/convert';
+//import { pathToName } from '../src/utils/convert';
 
 const currentPath = normalizePath(resolve());
-const currentPathNormalized = pathToName(currentPath);
+//const currentPathNormalized = pathToName(currentPath);
 
-test('Routes Sync', async () => {
+test('Routes Sync', async (t) => {
   const options = await resolveOptions({
     pagesDir: 'test/assets/pages',
     importMode: 'sync',
@@ -93,14 +94,14 @@ test('Routes Sync', async () => {
   ];
 
   expectedRoutes.forEach((i) =>
-    assert.equal(
+    t.deepEqual(
       routes.find((o) => o.name === i.name),
       i,
     ),
   );
 
   //console.log(code);
-  `import·${currentPathNormalized}_test_assets_pages_index_tsx·from·${currentPath}/test/assets/pages/index.tsx";`;
+  /*`import·${currentPathNormalized}_test_assets_pages_index_tsx·from·${currentPath}/test/assets/pages/index.tsx";`;
   const expectedCode = `import ${currentPathNormalized}_test_assets_pages_index_tsx from ${currentPath}/test/assets/pages/index.tsx";
 import ${currentPathNormalized}_test_assets_pages_components_tsx from ${currentPath}/test/assets/pages/components.tsx";
 import ${currentPathNormalized}_test_assets_pages_blog_today_index_jsx from ${currentPath}/test/assets/pages/blog/today/index.jsx";
@@ -131,7 +132,7 @@ const routes = [{ path: "/", component: ${currentPathNormalized}_test_assets_pag
 ]},
 ];
 
-export default routes;`;
+export default routes;`;*/
   /*`import ${currentPathNormalized}_test_assets_pages_index_tsx from "${currentPath}/test/assets/pages/index.tsx";
 import ${currentPathNormalized}_test_assets_pages_components_tsx from "${currentPath}/test/assets/pages/components.tsx";
 import ${currentPathNormalized}_test_assets_pages_blog_index_jsx from "${currentPath}/test/assets/pages/blog/index.jsx";
@@ -164,10 +165,11 @@ const routes = [{ path: "/blog", children: [{ path: "/today", children: [{ path:
 
 export default routes;`;*/
 
-  assert.fixture(code.normalize(), expectedCode.normalize());
+  // TODO: This won't work on different Machines on different Paths, will it?
+  t.snapshot(code.normalize());
 });
 
-test('Route async', async () => {
+test('Route async', async (t) => {
   const options = await resolveOptions({
     pagesDir: 'test/assets/pages',
     importMode: 'async',
@@ -177,6 +179,10 @@ test('Route async', async () => {
   const code = generateClientCode(routes, options);
 
   const expectedRoutes = [
+    {
+      name: '/',
+      path: `${currentPath}/test/assets/pages/index.tsx`,
+    },
     {
       name: '/blog',
       children: [
@@ -204,10 +210,6 @@ test('Route async', async () => {
       path: `${currentPath}/test/assets/pages/components.tsx`,
     },
     {
-      name: '/',
-      path: `${currentPath}/test/assets/pages/index.tsx`,
-    },
-    {
       name: '/about',
       children: [
         {
@@ -215,27 +217,6 @@ test('Route async', async () => {
           path: `${currentPath}/test/assets/pages/about/index.js`,
         },
       ],
-    },
-    {
-      name: '/:userId',
-      path: `${currentPath}/test/assets/pages/[userId].tsx`,
-    },
-    {
-      children: [
-        {
-          name: '/current',
-          path: `${currentPath}/test/assets/pages/[sensor]/current.ts`,
-        },
-        {
-          name: '/*all',
-          path: `${currentPath}/test/assets/pages/[sensor]/[...all].ts`,
-        },
-      ],
-      name: '/:sensor',
-    },
-    {
-      name: '/*all',
-      path: `${currentPath}/test/assets/pages/[...all].tsx`,
     },
     {
       name: '/__test__',
@@ -246,16 +227,37 @@ test('Route async', async () => {
         },
       ],
     },
+    {
+      name: '/:userId',
+      path: `${currentPath}/test/assets/pages/[userId].tsx`,
+    },
+    {
+      name: '/:sensor',
+      children: [
+        {
+          name: '/current',
+          path: `${currentPath}/test/assets/pages/[sensor]/current.ts`,
+        },
+        {
+          name: '/*all',
+          path: `${currentPath}/test/assets/pages/[sensor]/[...all].ts`,
+        },
+      ],
+    },
+    {
+      name: '/*all',
+      path: `${currentPath}/test/assets/pages/[...all].tsx`,
+    },
   ];
 
   expectedRoutes.forEach((i) =>
-    assert.equal(
+    t.deepEqual(
       routes.find((o) => o.name === i.name),
       i,
     ),
   );
 
-  const expectedCode = `import {lazy} from "solid-js";
+  /*const expectedCode = `import {lazy} from "solid-js";
 const routes = [{ path: "/blog", children: [{ path: "/today", children: [{ path: "/", component: lazy(() => import("${currentPath}/test/assets/pages/blog/today/index.jsx"))},
 ]},
 { path: "/", component: lazy(() => import("${currentPath}/test/assets/pages/blog/index.jsx"))},
@@ -274,9 +276,9 @@ const routes = [{ path: "/blog", children: [{ path: "/today", children: [{ path:
 ]},
 ];
 
-export default routes;`;
+export default routes;`;*/
 
-  assert.fixture(code, expectedCode);
+  t.snapshot(code);
 });
 
-test.run();
+//test.run();

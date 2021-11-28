@@ -1,14 +1,15 @@
 import type { ResolvedOptions } from '../src/types/options';
 import type { FileOutput } from '../src/types/page';
-import { resolve } from 'path';
-import { test } from 'uvu';
-import * as assert from 'uvu/assert';
-import { normalizePath } from 'vite';
 import { addPage, removePage, resolvePages } from '../src/pages';
+import { resolve } from 'path';
+import { normalizePath } from 'vite';
+import test from 'ava';
+//import { test } from 'uvu';
+//import * as assert from 'uvu/assert';
 
 const currentPath = normalizePath(resolve());
 
-test('resolvePages', async () => {
+test('resolvePages', async (t) => {
   const options: ResolvedOptions = {
     pagesDir: 'test/assets/pages',
     extensions: ['jsx', 'tsx', 'ts', 'js'],
@@ -81,24 +82,26 @@ test('resolvePages', async () => {
     },
   ];
 
+  t.plan(expectedResult.length);
+
   expectedResult.forEach((i) =>
-    assert.equal(
+    t.deepEqual(
       result.find((o) => o.path === i.path),
       i,
     ),
   );
 });
 
-test('addPage', () => {
+test('addPage', (t) => {
   const pages: FileOutput[] = [{ path: '/foo' }, { path: '/bar' }];
   addPage(pages, { path: '/baz' });
-  assert.equal(pages, [{ path: '/foo' }, { path: '/bar' }, { path: '/baz' }]);
+  t.deepEqual(pages, [{ path: '/foo' }, { path: '/bar' }, { path: '/baz' }]);
 });
 
-test('removePage', () => {
+test('removePage', (t) => {
   const pages: FileOutput[] = [{ path: '/foo' }, { path: '/bar' }];
   removePage(pages, { path: '/foo' });
-  assert.equal(pages, [{ path: '/bar' }]);
+  t.deepEqual(pages, [{ path: '/bar' }]);
 });
 
-test.run();
+//test.run();

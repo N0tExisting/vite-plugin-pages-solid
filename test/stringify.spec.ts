@@ -1,9 +1,10 @@
 import type { PreRoute } from '../src/types/route';
 import { stringifyRoutes } from '../src/stringify';
-import { test } from 'uvu';
-import * as assert from 'uvu/assert';
+import test from 'ava';
+//import { test } from 'uvu';
+//import * as assert from 'uvu/assert';
 
-test('Sync', () => {
+test('Sync', (t) => {
   const route: PreRoute[] = [
     { name: 'index', path: '/home/foo/bar/index.tsx' },
     {
@@ -17,23 +18,12 @@ test('Sync', () => {
   ];
   const result = stringifyRoutes(route, 'sync');
 
-  assert.equal(result.imp, [
-    'import _home_foo_bar_index_tsx from "/home/foo/bar/index.tsx"',
-    'import _home_foo_bar_about_index_tsx from "/home/foo/bar/about/index.tsx"',
-    'import _home_foo_bar_about_contact_tsx from "/home/foo/bar/about/contact.tsx"',
-  ]);
+  t.snapshot(result.imp);
 
-  assert.equal(
-    result.out,
-    `[{ path: "index", component: _home_foo_bar_index_tsx},
-{ path: "about", children: [{ path: "index", component: _home_foo_bar_about_index_tsx},
-{ path: "contact", component: _home_foo_bar_about_contact_tsx},
-]},
-]`,
-  );
+  t.snapshot(result.out);
 });
 
-test('Async', () => {
+test('Async', (t) => {
   const route: PreRoute[] = [
     { name: 'index', path: '/home/foo/bar/index.tsx' },
     {
@@ -47,16 +37,9 @@ test('Async', () => {
   ];
   const result = stringifyRoutes(route, 'async');
 
-  assert.equal(result.imp, []);
+  t.deepEqual(result.imp, []);
 
-  assert.equal(
-    result.out,
-    `[{ path: "index", component: lazy(() => import("/home/foo/bar/index.tsx"))},
-{ path: "about", children: [{ path: "index", component: lazy(() => import("/home/foo/bar/about/index.tsx"))},
-{ path: "contact", component: lazy(() => import("/home/foo/bar/about/contact.tsx"))},
-]},
-]`,
-  );
+  t.snapshot(result.out);
 });
 
-test.run();
+//test.run();

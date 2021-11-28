@@ -1,6 +1,7 @@
 import { resolve } from 'path';
-import { test } from 'uvu';
-import * as assert from 'uvu/assert';
+import test from 'ava';
+//import { test } from 'uvu';
+//import * as assert from 'uvu/assert';
 import { normalizePath } from 'vite';
 import { getPageFiles, getPageDirs, fromSinglePage } from '../src/files';
 import type { ResolvedOptions } from '../src/types/options';
@@ -10,7 +11,7 @@ const testDeepPagesDir = 'test/assets/deep-pages';
 
 const currentPath = normalizePath(resolve());
 
-test('getPageFiles', async () => {
+test('getPageFiles', async (t) => {
   const options: ResolvedOptions = {
     pagesDir: '.',
     extensions: ['jsx', 'tsx', 'ts', 'js'],
@@ -83,14 +84,14 @@ test('getPageFiles', async () => {
   ];
 
   expectedFiles.forEach((i) =>
-    assert.equal(
+    t.deepEqual(
       files.find((o) => o.path === i.path),
       i,
     ),
   );
 });
 
-test('getPageDirs', async () => {
+test('getPageDirs', async (t) => {
   const pageDirOptions = {
     dir: normalizePath(testDeepPagesDir),
     baseRoute: '',
@@ -117,14 +118,14 @@ test('getPageDirs', async () => {
   ];
 
   expectedDirs.forEach((i) =>
-    assert.equal(
+    t.deepEqual(
       dirs.find((o) => o.dir === i.dir),
       i,
     ),
   );
 });
 
-test('fromSinglePage - return empty', () => {
+test('fromSinglePage - return empty', (t) => {
   const options: ResolvedOptions = {
     pagesDir: '.',
     extensions: ['jsx', 'tsx', 'ts', 'js'],
@@ -136,10 +137,10 @@ test('fromSinglePage - return empty', () => {
   };
 
   const result = fromSinglePage('/foo/bar.vue', options);
-  assert.equal(result, { path: '' });
+  t.deepEqual(result, { path: '' });
 });
 
-test('fromSinglePage - return complete', () => {
+test('fromSinglePage - return complete', (t) => {
   const options: ResolvedOptions = {
     pagesDir: '.',
     extensions: ['jsx', 'tsx', 'ts', 'js'],
@@ -151,7 +152,7 @@ test('fromSinglePage - return complete', () => {
   };
 
   const result = fromSinglePage('/foo/bar.jsx', options);
-  assert.equal(result, { path: '/foo/bar.jsx' });
+  t.deepEqual(result, { path: '/foo/bar.jsx' });
 });
 
-test.run();
+//test.run();

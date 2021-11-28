@@ -1,25 +1,26 @@
-import { test } from 'uvu';
-import * as assert from 'uvu/assert';
+import test from 'ava';
+//import { test } from 'uvu';
+//import * as t from 'uvu/t';
 import { pathToName, toArray } from '../src/utils/convert';
 import { isDynamicRoute, isMultiRoute } from '../src/utils/validate';
 
-test('Dynamic routes', () => {
-  assert.equal(isDynamicRoute('[id]'), true);
-  assert.equal(isDynamicRoute('me'), false);
+test('Dynamic routes', (t) => {
+  t.true(isDynamicRoute('[id]'));
+  t.false(isDynamicRoute('me'));
 });
 
-test('Multi routes', () => {
-  assert.equal(isMultiRoute('[...all]'), true);
-  assert.equal(isMultiRoute('[id]'), false);
+test('Multi routes', (t) => {
+  t.true(isMultiRoute('[...all]'));
+  t.false(isMultiRoute('[id]'));
 });
 
-test('Path to name', () => {
-  assert.equal(pathToName('user-[route]-current'), 'user_$route$_current');
+test('Path to name', (t) => {
+  t.is(pathToName('user-[route]-current'), 'user_$route$_current');
 });
 
-test('toArray', () => {
-  assert.equal(toArray('foo'), ['foo']);
-  assert.equal(toArray(['foo', 'bar']), ['foo', 'bar']);
+test('toArray', (t) => {
+  t.deepEqual(toArray('foo'), ['foo']);
+  t.deepEqual(toArray(['foo', 'bar']), ['foo', 'bar']);
 });
 
-test.run();
+//test.run();
